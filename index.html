@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>סידור עבודה שבועי</title>
+    <style>
+        :root {
+            --primary-color: #4f46e5;
+            --bg-color: #f3f4f6;
+        }
+        body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background-color: var(--bg-color);
+            margin: 0;
+            padding: 12px;
+            color: #1f2937;
+        }
+        .app-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        h1, h2 {
+            text-align: center;
+            color: #111827;
+            margin-top: 5px;
+            margin-bottom: 15px;
+        }
+        .card {
+            background: white;
+            padding: 20px;
+            border-radius: 16px;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+        input, select, button {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 15px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            box-sizing: border-box;
+            font-size: 1rem;
+        }
+        input[type="color"] {
+            height: 45px;
+            padding: 2px;
+            cursor: pointer;
+        }
+        button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            font-weight: bold;
+            cursor: pointer;
+            margin-bottom: 0;
+            transition: background 0.2s;
+        }
+        button:hover {
+            background-color: #4338ca;
+        }
+        .flex-row {
+            display: flex;
+            gap: 10px;
+        }
+        .flex-row > div {
+            flex: 1;
+        }
+        .auto-date-badge {
+            display: inline-block;
+            background-color: #e0e7ff;
+            color: #4338ca;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+        /* עיצוב הטבלה השבועית */
+        .table-container {
+            width: 100%;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            background: white;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 750px;
+            text-align: center;
+        }
+        th, td {
+            padding: 12px 8px;
+            border: 1px solid #e5e7eb;
+            font-size: 0.9rem;
+            vertical-align: middle;
+        }
+        th {
+            background-color: #f9fafb;
+            color: #374151;
+            font-weight: bold;
+        }
+        th.emp-col, td.emp-col {
+            position: sticky;
+            right: 0;
+            background-color: #f3f4f6;
+            font-weight: bold;
+            z-index: 2;
+            box-shadow: -2px 0 5px rgba(0,0,0,0.05);
+            min-width: 100px;
+        }
+        .shift-box {
+            color: white;
+            font-weight: bold;
+            padding: 8px 4px;
+            border-radius: 6px;
+            position: relative;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.6);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            font-size: 0.85rem;
+        }
+        .delete-shift-btn {
+            display: block;
+            margin: 4px auto 0 auto;
+            background: rgba(255,255,255,0.25);
+            border: none;
+            color: white;
+            padding: 1px 6px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            cursor: pointer;
+            width: auto;
+        }
+        .delete-shift-btn:hover {
+            background: rgba(255,0,0,0.4);
+        }
+        .emp-tag-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-top: 10px;
+        }
+        .emp-badge {
+            color: white;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: bold;
+            text-shadow: 1px 1px 1px rgba(0,0,0,0.4);
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .remove-emp {
+            background: none;
+            border: none;
+            color: white;
+            cursor: pointer;
+            padding: 0;
+            margin: 0;
+            font-size: 0.85rem;
+            font-weight: bold;
+        }
+        
+        #printBtn {
+            background-color: #10b981;
+            margin-bottom: 15px;
+        }
+        #printBtn:hover {
+            background-color: #059669;
+        }
+
+        /* 🖨️ הגדרות מיוחדות להדפסה ברוחב מלא */
+        @media print {
+            @page {
+                size: A4 landscape; /* מגדיר ברירת מחדל של הדף לרוחב */
+                margin: 10mm;
+            }
+            body {
+                background: white;
+                color: black;
+                padding: 0;
+                margin: 0;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+            /* הסתרת כל האלמנטים המיותרים בדף המודפס */
+            .card:not(.print-section), h1, #printBtn, .delete-shift-btn, .remove-emp {
+                display: none !important;
+            }
+            .app-container {
+                max-width: 100% !important;
+                width: 100% !important;
+                padding: 0;
+                margin: 0;
+            }
+            .card.print-section {
+                box-shadow: none;
+                padding: 0;
+                margin: 0;
+                width: 100% !important;
+                max-width: 100% !important;
+            }
+            .table-container {
+                border: 1px solid #000;
+                border-radius: 0;
+                overflow: visible !important;
+                width: 100% !important;
+            }
+            table {
+                width: 100% !important;
+                min-width: 100% !important;
+                table-layout: fixed; /* מחלק את העמודות בצורה שווה */
+            }
+            th, td {
+                padding: 8px 4px;
+                font-size: 11pt;
+                border: 1px solid #000 !important;
+            }
+            th.emp-col, td.emp-col {
+                position: static;
+                box-shadow: none;
+                background-color: #f3f4f6 !important;
+                width: 12% !important;
+            }
+            .shift-box {
+                box-shadow: none;
+                text-shadow: none;
+                color: black !important; /* טקסט כהה יותר שייקרא טוב על הדף */
+                border: 1px solid rgba(0,0,0,0.2);
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+    <h1>📅 סידור עבודה שבועי</h1>
+
+    <div class="card">
+        <h2>👤 הוספת עובד חדש</h2>
+        <div class="flex-row">
+            <div style="flex: 2;">
+                <label>שם העובד:</label>
+                <input type="text" id="empName" placeholder="למשל: קארם">
+            </div>
+            <div>
+                <label>צבע:</label>
+                <input type="color" id="empColor" value="#4f46e5">
+            </div>
+        </div>
+        <button onclick="addEmployee()">שמור עובד</button>
+        <div class="emp-tag-list" id="employeesList"></div>
+    </div>
+
+    <div class="card">
+        <h2>⏰ הוספת משמרת לסידור</h2>
+        <label>בחר עובד:</label>
+        <select id="shiftEmployee">
+            <option value="">-- בחר עובד --</option>
+        </select>
+
+        <div class="flex-row">
+            <div>
+                <label>יום בשבוע:</label>
+                <select id="shiftDay" onchange="autoCalculateDate()">
+                    <option value="0">ראשון</option>
+                    <option value="1">שני</option>
+                    <option value="2">שלישי</option>
+                    <option value="3">רביעי</option>
+                    <option value="4">חמישי</option>
+                    <option value="5">שישי</option>
+                    <option value="6">שבת</option>
+                </select>
+            </div>
+            <div>
+                <label style="visibility: hidden;">תאריך מחושב:</label>
+                <div id="autoDateLabel" class="auto-date-badge">תאריך אוטומטי: </div>
+                <input type="hidden" id="shiftDate">
+            </div>
+        </div>
+
+        <div class="flex-row">
+            <div>
+                <label>משעה:</label>
+                <input type="time" id="startTime" value="15:00">
+            </div>
+            <div>
+                <label>עד שעה:</label>
+                <input type="time" id="endTime" value="23:00">
+            </div>
+        </div>
+
+        <button onclick="addShift()">הוסף לטבלה השבועית</button>
+    </div>
+
+    <div class="card print-section" style="padding: 10px;">
+        <h2>📋 לוח המשמרות לשבוע זה</h2>
+        
+        <button id="printBtn" onclick="window.print()">🖨️ הדפס סידור עבודה (מסך מלא)</button>
+        
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th class="emp-col">שם עובד</th>
+                        <th id="th-0">ראשון</th>
+                        <th id="th-1">שני</th>
+                        <th id="th-2">שלישי</th>
+                        <th id="th-3">רביעי</th>
+                        <th id="th-4">חמישי</th>
+                        <th id="th-5">שישי</th>
+                        <th id="th-6">שבת</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody">
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+    const daysNames = ['ראשון', 'שני', 'שלישי', 'רביעי', 'חמישי', 'שישי', 'שבת'];
+
+    let employees = JSON.parse(localStorage.getItem('grid_employees')) || [];
+    let shifts = JSON.parse(localStorage.getItem('grid_shifts')) || [];
+
+    function getCurrentWeekDates() {
+        const now = new Date();
+        const currentDay = now.getDay();
+        const startOfWeek = new Date(now);
+        startOfWeek.setDate(now.getDate() - currentDay);
+
+        const dates = [];
+        for (let i = 0; i < 7; i++) {
+            const d = new Date(startOfWeek);
+            d.setDate(startOfWeek.getDate() + i);
+            dates.push(d.toISOString().split('T')[0]);
+        }
+        return dates;
+    }
+
+    function autoCalculateDate() {
+        const dayIndex = parseInt(document.getElementById('shiftDay').value);
+        const weekDates = getCurrentWeekDates();
+        const selectedDate = weekDates[dayIndex];
+        
+        document.getElementById('shiftDate').value = selectedDate;
+        
+        const parts = selectedDate.split('-');
+        document.getElementById('autoDateLabel').innerText = `תאריך אוטומטי: ${parts[2]}/${parts[1]}`;
+    }
+
+    function updateTableHeaders() {
+        const weekDates = getCurrentWeekDates();
+        for (let i = 0; i < 7; i++) {
+            const parts = weekDates[i].split('-');
+            const formattedDate = `${parts[2]}/${parts[1]}`;
+            document.getElementById(`th-${i}`).innerText = `יום ${daysNames[i]} (${formattedDate})`;
+        }
+    }
+
+    function addEmployee() {
+        const name = document.getElementById('empName').value.trim();
+        const color = document.getElementById('empColor').value;
+
+        if (!name) return alert('נא להזין שם עובד');
+
+        employees.push({ id: Date.now().toString(), name, color });
+        localStorage.setItem('grid_employees', JSON.stringify(employees));
+        
+        document.getElementById('empName').value = '';
+        renderApp();
+    }
+
+    function deleteEmployee(id) {
+        if(confirm('האם אתה בטוח שברצונך למחוק את העובד? המשמרות שלו יישארו בטבלה.')) {
+            employees = employees.filter(e => e.id !== id);
+            localStorage.setItem('grid_employees', JSON.stringify(employees));
+            renderApp();
+        }
+    }
+
+    function addShift() {
+        const empId = document.getElementById('shiftEmployee').value;
+        const date = document.getElementById('shiftDate').value;
+        const start = document.getElementById('startTime').value;
+        const end = document.getElementById('endTime').value;
+
+        if (!empId) return alert('נא לבחור עובד מהרשימה');
+        if (!date) return alert('שגיאה בחישוב התאריך האוטומטי');
+        if (!start || !end) return alert('נא למלא שעות משמרת');
+
+        shifts.push({ id: Date.now().toString(), empId, date, start, end });
+        localStorage.setItem('grid_shifts', JSON.stringify(shifts));
+        renderApp();
+    }
+
+    function deleteShift(id) {
+        shifts = shifts.filter(s => s.id !== id);
+        localStorage.setItem('grid_shifts', JSON.stringify(shifts));
+        renderApp();
+    }
+
+    function renderApp() {
+        updateTableHeaders();
+        
+        const listDiv = document.getElementById('employeesList');
+        const select = document.getElementById('shiftEmployee');
+        listDiv.innerHTML = '';
+        select.innerHTML = '<option value="">-- בחר עובד --</option>';
+
+        employees.forEach(emp => {
+            listDiv.innerHTML += `
+                <span class="emp-badge" style="background-color: ${emp.color}">
+                    ${emp.name}
+                    <button class="remove-emp" onclick="deleteEmployee('${emp.id}')">×</button>
+                </span>`;
+            select.innerHTML += `<option value="${emp.id}">${emp.name}</option>`;
+        });
+
+        const tableBody = document.getElementById('tableBody');
+        tableBody.innerHTML = '';
+
+        if (employees.length === 0) {
+            tableBody.innerHTML = `<tr><td colspan="8" style="color: #6b7280; padding: 20px;">טרם הוספת עובדים למערכת.</td></tr>`;
+            return;
+        }
+
+        const weekDates = getCurrentWeekDates();
+
+        employees.forEach(emp => {
+            let rowHtml = `<tr>`;
+            rowHtml += `<td class="emp-col" style="border-right: 4px solid ${emp.color}">${emp.name}</td>`;
+            
+            for (let i = 0; i < 7; i++) {
+                const currentDate = weekDates[i];
+                const dayShift = shifts.find(s => s.empId === emp.id && s.date === currentDate);
+                
+                rowHtml += `<td>`;
+                if (dayShift) {
+                    rowHtml += `
+                        <div class="shift-box" style="background-color: ${emp.color}">
+                            <div>${dayShift.start}-${dayShift.end}</div>
+                            <button class="delete-shift-btn" onclick="deleteShift('${dayShift.id}')">מחק ❌</button>
+                        </div>
+                    `;
+                } else {
+                    rowHtml += `<span style="color: #d1d5db; font-size: 0.8rem;">-</span>`;
+                }
+                rowHtml += `</td>`;
+            }
+            
+            rowHtml += `</tr>`;
+            tableBody.innerHTML += rowHtml;
+        });
+    }
+
+    autoCalculateDate();
+    renderApp();
+</script>
+
+</body>
+</html>

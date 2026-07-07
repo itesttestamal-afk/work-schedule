@@ -141,7 +141,6 @@
             font-size: 0.85rem;
         }
         
-        /* תיקון השעונים שיהיו נוחים ללחיצה בטלפון */
         .time-edit-container {
             display: flex;
             align-items: center;
@@ -156,7 +155,7 @@
             color: #1e293b !important;
             font-weight: bold;
             font-size: 0.85rem;
-            width: 65px !important; /* רחב מספיק לאצבע */
+            width: 65px !important;
             padding: 4px 2px !important;
             margin: 0 !important;
             text-align: center;
@@ -164,6 +163,11 @@
             cursor: pointer;
             font-family: inherit;
             display: inline-block;
+        }
+        
+        /* אלמנט טקסט להדפסה בלבד - מוסתר כברירת מחדל במסך */
+        .print-only-time {
+            display: none;
         }
         
         .delete-shift-btn {
@@ -215,18 +219,78 @@
             margin-bottom: 0;
         }
 
+        /* 🖨️ עיצוב מחדש קשוח להדפסה בלבד */
         @media print {
-            @page { size: A4 landscape; margin: 10mm; }
-            body { background: white; color: black; padding: 0; margin: 0; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-            .card:not(.print-section), h1, button, .delete-shift-btn, .remove-emp, .template-zone { display: none !important; }
-            .app-container { max-width: 100% !important; width: 100% !important; padding: 0; margin: 0; }
-            .card.print-section { box-shadow: none; padding: 0; margin: 0; width: 100% !important; }
-            .table-container { border: 1px solid #000; border-radius: 0; overflow: visible !important; width: 100% !important; }
-            table { width: 100% !important; min-width: 100% !important; table-layout: fixed; }
-            th, td { padding: 8px 4px; font-size: 11pt; border: 1px solid #000 !important; }
-            th.emp-col, td.emp-col { position: static; box-shadow: none; background-color: #f3f4f6 !important; width: 12% !important; }
-            .shift-box { box-shadow: none; color: black !important; border: 1px solid rgba(0,0,0,0.2); background-color: transparent !important; }
-            .inline-time-input { border: none !important; background: transparent !important; color: black !important; pointer-events: none; width: auto !important; }
+            @page { 
+                size: A4 landscape; 
+                margin: 10mm; 
+            }
+            body { 
+                background: white !important; 
+                color: black !important; 
+                padding: 0; 
+                margin: 0; 
+                -webkit-print-color-adjust: exact !important; 
+                print-color-adjust: exact !important; 
+            }
+            /* הסתרת כל מה שלא קשור לטבלה */
+            .card:not(.print-section), h1, button, .delete-shift-btn, .remove-emp, .template-zone, .time-edit-container { 
+                display: none !important; 
+            }
+            .app-container { 
+                max-width: 100% !important; 
+                width: 100% !important; 
+                padding: 0; 
+                margin: 0; 
+            }
+            .card.print-section { 
+                box-shadow: none !important; 
+                padding: 0 !important; 
+                margin: 0 !important; 
+                width: 100% !important; 
+            }
+            .table-container { 
+                border: 1px solid #000 !important; 
+                border-radius: 0 !important; 
+                overflow: visible !important; 
+                width: 100% !important; 
+            }
+            table { 
+                width: 100% !important; 
+                min-width: 100% !important; 
+                table-layout: fixed; 
+            }
+            th, td { 
+                padding: 10px 4px !important; 
+                font-size: 11pt !important; 
+                border: 1px solid #000 !important; 
+            }
+            th.emp-col, td.emp-col { 
+                position: static !important; 
+                box-shadow: none !important; 
+                background-color: #f3f4f6 !important; 
+                width: 12% !important; 
+                -webkit-print-color-adjust: exact !important; 
+                print-color-adjust: exact !important; 
+            }
+            /* שמירה קשיחה על צבעי העובדים בהדפסה */
+            .shift-box { 
+                box-shadow: none !important; 
+                color: white !important; 
+                text-shadow: 1px 1px 1px rgba(0,0,0,0.5) !important;
+                -webkit-print-color-adjust: exact !important; 
+                print-color-adjust: exact !important;
+                padding: 8px 4px !important;
+            }
+            /* הצגת הטקסט הנקי והסתרת שעוני הבחירה */
+            .print-only-time { 
+                display: block !important; 
+                font-size: 11pt !important; 
+                font-weight: bold !important; 
+                color: white !important; 
+                direction: ltr !important;
+                text-align: center !important;
+            }
         }
     </style>
 </head>
@@ -415,6 +479,11 @@
         if (shift) {
             shift[field] = val;
             localStorage.setItem('grid_shifts', JSON.stringify(shifts));
+            // רענון קל רק כדי לעדכן את הטקסט המוסתר של ההדפסה
+            const textElement = document.getElementById(`print-time-${id}`);
+            if(textElement) {
+                textElement.innerText = `${shift.start} - ${shift.end}`;
+            }
         }
     }
 
@@ -517,6 +586,8 @@
                                 <span>-</span>
                                 <input type="time" class="inline-time-input" value="${dayShift.end}" onchange="updateInlineShiftTime('${dayShift.id}', this.value, 'end')">
                             </div>
+                            <div class="print-only-time" id="print-time-${dayShift.id}">${dayShift.start} - ${dayShift.end}</div>
+                            
                             <button class="delete-shift-btn" onclick="deleteShift('${dayShift.id}')">מחק ❌</button>
                         </div>
                     `;

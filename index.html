@@ -82,7 +82,21 @@
             font-weight: bold;
             margin-bottom: 15px;
         }
-        /* עיצוב הטבלה השבועית */
+        
+        .template-zone {
+            background-color: #f9fafb;
+            border: 2px dashed #e5e7eb;
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+        }
+        .btn-success { background-color: #10b981; }
+        .btn-success:hover { background-color: #059669; }
+        .btn-warning { background-color: #f59e0b; }
+        .btn-warning:hover { background-color: #d97706; }
+        .btn-danger { background-color: #ef4444; }
+        .btn-danger:hover { background-color: #dc2626; }
+        
         .table-container {
             width: 100%;
             overflow-x: auto;
@@ -120,27 +134,53 @@
         .shift-box {
             color: white;
             font-weight: bold;
-            padding: 8px 4px;
-            border-radius: 6px;
+            padding: 10px 6px;
+            border-radius: 8px;
             position: relative;
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.6);
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.15);
             font-size: 0.85rem;
         }
+        
+        /* תיקון השעונים שיהיו נוחים ללחיצה בטלפון */
+        .time-edit-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            direction: ltr;
+            margin-bottom: 6px;
+        }
+        .inline-time-input {
+            background: white !important;
+            border: 1px solid #cbd5e1 !important;
+            color: #1e293b !important;
+            font-weight: bold;
+            font-size: 0.85rem;
+            width: 65px !important; /* רחב מספיק לאצבע */
+            padding: 4px 2px !important;
+            margin: 0 !important;
+            text-align: center;
+            border-radius: 6px !important;
+            cursor: pointer;
+            font-family: inherit;
+            display: inline-block;
+        }
+        
         .delete-shift-btn {
             display: block;
             margin: 4px auto 0 auto;
-            background: rgba(255,255,255,0.25);
-            border: none;
+            background: rgba(255,255,255,0.3);
+            border: 1px solid rgba(255,255,255,0.5);
             color: white;
-            padding: 1px 6px;
+            padding: 2px 8px;
             border-radius: 4px;
             font-size: 0.75rem;
             cursor: pointer;
             width: auto;
+            font-weight: bold;
         }
         .delete-shift-btn:hover {
-            background: rgba(255,0,0,0.4);
+            background: rgba(255,0,0,0.6);
         }
         .emp-tag-list {
             display: flex;
@@ -171,72 +211,22 @@
         }
         
         #printBtn {
-            background-color: #10b981;
-            margin-bottom: 15px;
-        }
-        #printBtn:hover {
-            background-color: #059669;
+            background-color: #6b7280;
+            margin-bottom: 0;
         }
 
-        /* 🖨️ הגדרות מיוחדות להדפסה ברוחב מלא */
         @media print {
-            @page {
-                size: A4 landscape; /* מגדיר ברירת מחדל של הדף לרוחב */
-                margin: 10mm;
-            }
-            body {
-                background: white;
-                color: black;
-                padding: 0;
-                margin: 0;
-                -webkit-print-color-adjust: exact;
-                print-color-adjust: exact;
-            }
-            /* הסתרת כל האלמנטים המיותרים בדף המודפס */
-            .card:not(.print-section), h1, #printBtn, .delete-shift-btn, .remove-emp {
-                display: none !important;
-            }
-            .app-container {
-                max-width: 100% !important;
-                width: 100% !important;
-                padding: 0;
-                margin: 0;
-            }
-            .card.print-section {
-                box-shadow: none;
-                padding: 0;
-                margin: 0;
-                width: 100% !important;
-                max-width: 100% !important;
-            }
-            .table-container {
-                border: 1px solid #000;
-                border-radius: 0;
-                overflow: visible !important;
-                width: 100% !important;
-            }
-            table {
-                width: 100% !important;
-                min-width: 100% !important;
-                table-layout: fixed; /* מחלק את העמודות בצורה שווה */
-            }
-            th, td {
-                padding: 8px 4px;
-                font-size: 11pt;
-                border: 1px solid #000 !important;
-            }
-            th.emp-col, td.emp-col {
-                position: static;
-                box-shadow: none;
-                background-color: #f3f4f6 !important;
-                width: 12% !important;
-            }
-            .shift-box {
-                box-shadow: none;
-                text-shadow: none;
-                color: black !important; /* טקסט כהה יותר שייקרא טוב על הדף */
-                border: 1px solid rgba(0,0,0,0.2);
-            }
+            @page { size: A4 landscape; margin: 10mm; }
+            body { background: white; color: black; padding: 0; margin: 0; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            .card:not(.print-section), h1, button, .delete-shift-btn, .remove-emp, .template-zone { display: none !important; }
+            .app-container { max-width: 100% !important; width: 100% !important; padding: 0; margin: 0; }
+            .card.print-section { box-shadow: none; padding: 0; margin: 0; width: 100% !important; }
+            .table-container { border: 1px solid #000; border-radius: 0; overflow: visible !important; width: 100% !important; }
+            table { width: 100% !important; min-width: 100% !important; table-layout: fixed; }
+            th, td { padding: 8px 4px; font-size: 11pt; border: 1px solid #000 !important; }
+            th.emp-col, td.emp-col { position: static; box-shadow: none; background-color: #f3f4f6 !important; width: 12% !important; }
+            .shift-box { box-shadow: none; color: black !important; border: 1px solid rgba(0,0,0,0.2); background-color: transparent !important; }
+            .inline-time-input { border: none !important; background: transparent !important; color: black !important; pointer-events: none; width: auto !important; }
         }
     </style>
 </head>
@@ -305,7 +295,16 @@
     <div class="card print-section" style="padding: 10px;">
         <h2>📋 לוח המשמרות לשבוע זה</h2>
         
-        <button id="printBtn" onclick="window.print()">🖨️ הדפס סידור עבודה (מסך מלא)</button>
+        <div class="template-zone">
+            <label>⚡ אפשרויות שכפול וחיסכון בזמן:</label>
+            <div class="flex-row" style="margin-bottom: 10px;">
+                <button class="btn-success" onclick="saveAsTemplate()">💾 שמור סידור זה כתבנית קבועה</button>
+                <button class="btn-warning" onclick="loadTemplate()">🔄 טען סידור מהתבנית הקבועה</button>
+            </div>
+            <button class="btn-danger" onclick="clearCurrentWeek()">🗑️ מחק את כל המשמרות השבוע (התחל מחדש)</button>
+        </div>
+
+        <button id="printBtn" class="btn-success" style="background-color: #10b981; margin-bottom: 15px;" onclick="window.print()">🖨️ הדפס סידור עבודה (מסך מלא)</button>
         
         <div class="table-container">
             <table>
@@ -411,6 +410,69 @@
         renderApp();
     }
 
+    function updateInlineShiftTime(id, val, field) {
+        const shift = shifts.find(s => s.id === id);
+        if (shift) {
+            shift[field] = val;
+            localStorage.setItem('grid_shifts', JSON.stringify(shifts));
+        }
+    }
+
+    function saveAsTemplate() {
+        const weekDates = getCurrentWeekDates();
+        const currentWeekShifts = shifts.filter(s => weekDates.includes(s.date));
+        
+        if (currentWeekShifts.length === 0) {
+            return alert('אין משמרות בטבלה הנוכחית כדי לשמור כתבנית.');
+        }
+        
+        const template = currentWeekShifts.map(s => {
+            return {
+                empId: s.empId,
+                dayIndex: weekDates.indexOf(s.date),
+                start: s.start,
+                end: s.end
+            };
+        });
+        
+        localStorage.setItem('grid_template', JSON.stringify(template));
+        alert('הסידור הנוכחי נשמר בהצלחה כתבנית קבועה!');
+    }
+
+    function loadTemplate() {
+        const template = JSON.parse(localStorage.getItem('grid_template')) || [];
+        if (template.length === 0) {
+            return alert('לא נמצאה תבנית שמורה. קודם כל סדר את השבוע הנוכחי ולחץ "שמור כתבנית קבועה".');
+        }
+        
+        if (confirm('טעינת התבנית תמחק את המשמרות הקיימות בשבוע זה. להמשיך?')) {
+            const weekDates = getCurrentWeekDates();
+            shifts = shifts.filter(s => !weekDates.includes(s.date));
+            
+            template.forEach((t, index) => {
+                shifts.push({
+                    id: (Date.now() + index).toString(),
+                    empId: t.empId,
+                    date: weekDates[t.dayIndex],
+                    start: t.start,
+                    end: t.end
+                });
+            });
+            
+            localStorage.setItem('grid_shifts', JSON.stringify(shifts));
+            renderApp();
+        }
+    }
+
+    function clearCurrentWeek() {
+        if (confirm('האם אתה בטוח שברצונך למחוק את כל המשמרות של השבוע הנוכחי?')) {
+            const weekDates = getCurrentWeekDates();
+            shifts = shifts.filter(s => !weekDates.includes(s.date));
+            localStorage.setItem('grid_shifts', JSON.stringify(shifts));
+            renderApp();
+        }
+    }
+
     function renderApp() {
         updateTableHeaders();
         
@@ -450,7 +512,11 @@
                 if (dayShift) {
                     rowHtml += `
                         <div class="shift-box" style="background-color: ${emp.color}">
-                            <div>${dayShift.start}-${dayShift.end}</div>
+                            <div class="time-edit-container">
+                                <input type="time" class="inline-time-input" value="${dayShift.start}" onchange="updateInlineShiftTime('${dayShift.id}', this.value, 'start')">
+                                <span>-</span>
+                                <input type="time" class="inline-time-input" value="${dayShift.end}" onchange="updateInlineShiftTime('${dayShift.id}', this.value, 'end')">
+                            </div>
                             <button class="delete-shift-btn" onclick="deleteShift('${dayShift.id}')">מחק ❌</button>
                         </div>
                     `;

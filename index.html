@@ -135,14 +135,13 @@
             font-size: 1rem;
         }
         
-        /* ⬜ מרובע המשמרת - לבן נקי לחלוטין בלי צבע בפנים */
+        /* ⬛ אזור המשמרת - שקוף לחלוטין בלי קופסה לבנה */
         .shift-box {
-            background-color: #ffffff !important;
-            border: 1px solid #cbd5e1;
-            padding: 10px 6px;
-            border-radius: 8px;
+            background-color: transparent !important;
+            border: none !important;
+            padding: 4px 2px;
             position: relative;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            box-shadow: none !important;
             box-sizing: border-box;
         }
         
@@ -150,55 +149,61 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 4px;
+            gap: 2px;
             direction: ltr;
-            margin-bottom: 6px;
         }
         
-        /* שעות מודגשות וברורות בתוך תיבות הבחירה */
+        /* 🔢 שדות השעות - נראים כמו טקסט שחור מודגש רגיל, אך ניתנים לעריכה בלחיצה */
         .inline-time-input {
-            background: white !important;
-            border: 1px solid #94a3b8 !important;
+            background: transparent !important;
+            border: none !important;
             color: #000000 !important;
             font-weight: bold !important;
-            font-size: 0.9rem !important;
-            width: 65px !important;
-            padding: 4px 2px !important;
+            font-size: 1.05rem !important; /* מעט גדול יותר לקריאות */
+            width: 55px !important;
+            padding: 0 !important;
             margin: 0 !important;
             text-align: center;
-            border-radius: 6px !important;
             cursor: pointer;
             font-family: inherit;
             display: inline-block;
+            outline: none;
+            -webkit-appearance: none;
+        }
+        
+        /* הסתרת סמל השעון הדיפולטיבי של דפדפנים כדי להשאיר רק מספרים נקיים */
+        .inline-time-input::-webkit-calendar-picker-indicator {
+            display: none !important;
+            -webkit-appearance: none !important;
         }
         
         .time-edit-container span {
             font-weight: bold;
             color: #000000;
+            font-size: 1.05rem;
         }
         
         .print-only-time {
             display: none;
         }
         
+        /* כפתור מחיקה קומפקטי ואדום מתחת לשעות */
         .delete-shift-btn {
             display: block;
             margin: 4px auto 0 auto;
-            background: #f1f5f9;
-            border: 1px solid #cbd5e1;
-            color: #475569;
-            padding: 2px 8px;
-            border-radius: 4px;
+            background: transparent;
+            border: none;
+            color: #ef4444;
+            padding: 2px 6px;
             font-size: 0.75rem;
             cursor: pointer;
             width: auto;
             font-weight: bold;
         }
         .delete-shift-btn:hover {
-            background: #ef4444;
-            color: white;
-            border-color: #ef4444;
+            text-decoration: underline;
         }
+        
         .emp-tag-list {
             display: flex;
             flex-wrap: wrap;
@@ -284,10 +289,9 @@
                 width: 12% !important; 
                 font-weight: bold !important;
             }
-            /* שמירה על מרובעים לבנים ונקיים בהדפסה */
             .shift-box { 
-                background-color: #ffffff !important;
-                border: 1px solid #000000 !important;
+                background-color: transparent !important;
+                border: none !important;
                 box-shadow: none !important; 
                 padding: 8px 4px !important;
             }
@@ -441,7 +445,6 @@
         }
     }
 
-    // פונקציה שמייצרת צבע רקע עדין ומעודן לשורה (15% אטימות)
     function getPastelRGBA(hexColor, alpha = 0.15) {
         let hex = hexColor.replace('#', '');
         let r = parseInt(hex.substring(0, 2), 16);
@@ -568,13 +571,12 @@
         select.innerHTML = '<option value="">-- בחר עובד --</option>';
 
         employees.forEach(emp => {
-            // תגיות עובדים למעלה - עם רקע השורה התואם
             listDiv.innerHTML += `
                 <span class="emp-badge" style="background-color: ${getPastelRGBA(emp.color, 0.2)}; border: 2px solid ${emp.color};">
                     ${emp.name}
                     <button class="remove-emp" onclick="deleteEmployee('${emp.id}')">×</button>
                 </span>`;
-            select.innerHTML += `<option value="${emp.id}">${emp.name}</option>`;
+            select.innerHTML += `<option value="${emp.id}">${emp.name}</option>';`;
         });
 
         const tableBody = document.getElementById('tableBody');
@@ -588,11 +590,9 @@
         const weekDates = getCurrentWeekDates();
 
         employees.forEach(emp => {
-            // צבע הרקע שישמש את כל השורה של העובד הנוכחי
             const rowBgStyle = `background-color: ${getPastelRGBA(emp.color, 0.16)} !important;`;
             
             let rowHtml = `<tr>`;
-            // תא שם השומר מקבל את רקע השורה ופס צבע עבה בולט בצד
             rowHtml += `<td class="emp-col" style="${rowBgStyle} border-right: 5px solid ${emp.color};">${emp.name}</td>`;
             
             for (let i = 0; i < 7; i++) {
@@ -610,23 +610,4 @@
                             </div>
                             <div class="print-only-time" id="print-time-${dayShift.id}">${dayShift.start} - ${dayShift.end}</div>
                             
-                            <button class="delete-shift-btn" onclick="deleteShift('${dayShift.id}')">מחק ❌</button>
-                        </div>
-                    `;
-                } else {
-                    rowHtml += `<span style="color: #94a3b8; font-size: 0.85rem; font-weight: bold;">-</span>`;
-                }
-                rowHtml += `</td>`;
-            }
-            
-            rowHtml += `</tr>`;
-            tableBody.innerHTML += rowHtml;
-        });
-    }
-
-    autoCalculateDate();
-    renderApp();
-</script>
-
-</body>
-</html>
+                            <button class="delete-shift-btn" onclick="deleteShift('${dayShift.id}')

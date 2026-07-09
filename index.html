@@ -135,7 +135,7 @@
             font-size: 1rem;
         }
         
-        /* ⬛ אזור המשמרת - שקוף לחלוטין בלי קופסה לבנה */
+        /* אזור המשמרת - שקוף לחלוטין בלי קופסה לבנה */
         .shift-box {
             background-color: transparent !important;
             border: none !important;
@@ -153,13 +153,13 @@
             direction: ltr;
         }
         
-        /* 🔢 שדות השעות - נראים כמו טקסט שחור מודגש רגיל, אך ניתנים לעריכה בלחיצה */
+        /* שדות השעות - נראים כמו טקסט שחור מודגש רגיל, אך ניתנים לעריכה בלחיצה */
         .inline-time-input {
             background: transparent !important;
             border: none !important;
             color: #000000 !important;
             font-weight: bold !important;
-            font-size: 1.05rem !important; /* מעט גדול יותר לקריאות */
+            font-size: 1.05rem !important;
             width: 55px !important;
             padding: 0 !important;
             margin: 0 !important;
@@ -236,7 +236,7 @@
             margin-bottom: 0;
         }
 
-        /* 🖨️ התאמות מיוחדות להדפסה */
+        /* התאמות מיוחדות להדפסה */
         @media print {
             @page { 
                 size: A4 landscape; 
@@ -295,7 +295,6 @@
                 box-shadow: none !important; 
                 padding: 8px 4px !important;
             }
-            /* שעות מודגשות ושחורות לחלוטין בהדפסה */
             .print-only-time { 
                 display: block !important; 
                 font-size: 12pt !important; 
@@ -480,134 +479,4 @@
         const start = document.getElementById('startTime').value;
         const end = document.getElementById('endTime').value;
 
-        if (!empId) return alert('נא לבחור עובד מהרשימה');
-        if (!date) return alert('שגיאה בחישוב התאריך האוטומטי');
-        if (!start || !end) return alert('נא למלא שעות משמרת');
-
-        shifts.push({ id: Date.now().toString(), empId, date, start, end });
-        localStorage.setItem('grid_shifts', JSON.stringify(shifts));
-        renderApp();
-    }
-
-    function deleteShift(id) {
-        shifts = shifts.filter(s => s.id !== id);
-        localStorage.setItem('grid_shifts', JSON.stringify(shifts));
-        renderApp();
-    }
-
-    function updateInlineShiftTime(id, val, field) {
-        const shift = shifts.find(s => s.id === id);
-        if (shift) {
-            shift[field] = val;
-            localStorage.setItem('grid_shifts', JSON.stringify(shifts));
-            const textElement = document.getElementById(`print-time-${id}`);
-            if(textElement) {
-                textElement.innerText = `${shift.start} - ${shift.end}`;
-            }
-        }
-    }
-
-    function saveAsTemplate() {
-        const weekDates = getCurrentWeekDates();
-        const currentWeekShifts = shifts.filter(s => weekDates.includes(s.date));
-        
-        if (currentWeekShifts.length === 0) {
-            return alert('אין משמרות בטבלה הנוכחית כדי לשמור כתבנית.');
-        }
-        
-        const template = currentWeekShifts.map(s => {
-            return {
-                empId: s.empId,
-                dayIndex: weekDates.indexOf(s.date),
-                start: s.start,
-                end: s.end
-            };
-        });
-        
-        localStorage.setItem('grid_template', JSON.stringify(template));
-        alert('הסידור הנוכחי נשמר בהצלחה כתבנית קבועה!');
-    }
-
-    function loadTemplate() {
-        const template = JSON.parse(localStorage.getItem('grid_template')) || [];
-        if (template.length === 0) {
-            return alert('לא נמצאה תבנית שמורה. קודם כל סדר את השבוע הנוכחי ולחץ "שמור כתבנית קבועה".');
-        }
-        
-        if (confirm('טעינת התבנית תמחק את המשמרות הקיימות בשבוע זה. להמשיך?')) {
-            const weekDates = getCurrentWeekDates();
-            shifts = shifts.filter(s => !weekDates.includes(s.date));
-            
-            template.forEach((t, index) => {
-                shifts.push({
-                    id: (Date.now() + index).toString(),
-                    empId: t.empId,
-                    date: weekDates[t.dayIndex],
-                    start: t.start,
-                    end: t.end
-                });
-            });
-            
-            localStorage.setItem('grid_shifts', JSON.stringify(shifts));
-            renderApp();
-        }
-    }
-
-    function clearCurrentWeek() {
-        if (confirm('האם אתה בטוח שברצונך למחוק את כל המשמרות של השבוע הנוכחי?')) {
-            const weekDates = getCurrentWeekDates();
-            shifts = shifts.filter(s => !weekDates.includes(s.date));
-            localStorage.setItem('grid_shifts', JSON.stringify(shifts));
-            renderApp();
-        }
-    }
-
-    function renderApp() {
-        updateTableHeaders();
-        
-        const listDiv = document.getElementById('employeesList');
-        const select = document.getElementById('shiftEmployee');
-        listDiv.innerHTML = '';
-        select.innerHTML = '<option value="">-- בחר עובד --</option>';
-
-        employees.forEach(emp => {
-            listDiv.innerHTML += `
-                <span class="emp-badge" style="background-color: ${getPastelRGBA(emp.color, 0.2)}; border: 2px solid ${emp.color};">
-                    ${emp.name}
-                    <button class="remove-emp" onclick="deleteEmployee('${emp.id}')">×</button>
-                </span>`;
-            select.innerHTML += `<option value="${emp.id}">${emp.name}</option>';`;
-        });
-
-        const tableBody = document.getElementById('tableBody');
-        tableBody.innerHTML = '';
-
-        if (employees.length === 0) {
-            tableBody.innerHTML = `<tr><td colspan="8" style="color: #6b7280; padding: 20px;">טרם הוספת עובדים למערכת.</td></tr>`;
-            return;
-        }
-
-        const weekDates = getCurrentWeekDates();
-
-        employees.forEach(emp => {
-            const rowBgStyle = `background-color: ${getPastelRGBA(emp.color, 0.16)} !important;`;
-            
-            let rowHtml = `<tr>`;
-            rowHtml += `<td class="emp-col" style="${rowBgStyle} border-right: 5px solid ${emp.color};">${emp.name}</td>`;
-            
-            for (let i = 0; i < 7; i++) {
-                const currentDate = weekDates[i];
-                const dayShift = shifts.find(s => s.empId === emp.id && s.date === currentDate);
-                
-                rowHtml += `<td style="${rowBgStyle}">`;
-                if (dayShift) {
-                    rowHtml += `
-                        <div class="shift-box">
-                            <div class="time-edit-container">
-                                <input type="time" class="inline-time-input" value="${dayShift.start}" onchange="updateInlineShiftTime('${dayShift.id}', this.value, 'start')">
-                                <span>-</span>
-                                <input type="time" class="inline-time-input" value="${dayShift.end}" onchange="updateInlineShiftTime('${dayShift.id}', this.value, 'end')">
-                            </div>
-                            <div class="print-only-time" id="print-time-${dayShift.id}">${dayShift.start} - ${dayShift.end}</div>
-                            
-                            <button class="delete-shift-btn" onclick="deleteShift('${dayShift.id}')
+        if (!empId) return alert('נא לב

@@ -122,23 +122,28 @@
             color: #374151;
             font-weight: bold;
         }
+        
+        /* הדגשה חזקה לשמות העובדים בטבלה */
         th.emp-col, td.emp-col {
             position: sticky;
             right: 0;
             background-color: #f3f4f6;
-            font-weight: bold;
+            font-weight: 800 !important; /* מודגש מאוד */
+            color: #111827 !important;
             z-index: 2;
             box-shadow: -2px 0 5px rgba(0,0,0,0.05);
             min-width: 100px;
+            font-size: 0.95rem;
         }
+        
+        /* קוביית המשמרת המעודנת */
         .shift-box {
-            color: white;
-            font-weight: bold;
             padding: 10px 6px;
             border-radius: 8px;
             position: relative;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.08);
             font-size: 0.85rem;
+            box-sizing: border-box;
         }
         
         .time-edit-container {
@@ -148,13 +153,17 @@
             gap: 4px;
             direction: ltr;
             margin-bottom: 6px;
+            font-weight: bold;
+            color: #111827;
         }
+        
+        /* הדגשת השעות בתוך תיבות הבחירה במסך */
         .inline-time-input {
             background: white !important;
             border: 1px solid #cbd5e1 !important;
-            color: #1e293b !important;
-            font-weight: bold;
-            font-size: 0.85rem;
+            color: #111827 !important;
+            font-weight: 800 !important; /* שעות מודגשות */
+            font-size: 0.9rem !important;
             width: 65px !important;
             padding: 4px 2px !important;
             margin: 0 !important;
@@ -165,7 +174,11 @@
             display: inline-block;
         }
         
-        /* אלמנט טקסט להדפסה בלבד - מוסתר כברירת מחדל במסך */
+        .time-edit-container span {
+            font-weight: 800;
+            color: #111827;
+        }
+        
         .print-only-time {
             display: none;
         }
@@ -173,18 +186,21 @@
         .delete-shift-btn {
             display: block;
             margin: 4px auto 0 auto;
-            background: rgba(255,255,255,0.3);
-            border: 1px solid rgba(255,255,255,0.5);
-            color: white;
+            background: rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            color: #4b5563;
             padding: 2px 8px;
             border-radius: 4px;
             font-size: 0.75rem;
             cursor: pointer;
             width: auto;
             font-weight: bold;
+            transition: all 0.2s;
         }
         .delete-shift-btn:hover {
-            background: rgba(255,0,0,0.6);
+            background: #ef4444;
+            color: white;
+            border-color: #ef4444;
         }
         .emp-tag-list {
             display: flex;
@@ -193,25 +209,28 @@
             margin-top: 10px;
         }
         .emp-badge {
-            color: white;
-            padding: 4px 10px;
+            color: #111827;
+            padding: 4px 12px;
             border-radius: 20px;
             font-size: 0.85rem;
-            font-weight: bold;
-            text-shadow: 1px 1px 1px rgba(0,0,0,0.4);
+            font-weight: 800; /* שמות מודגשים בתגיות */
             display: inline-flex;
             align-items: center;
             gap: 6px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
         }
         .remove-emp {
             background: none;
             border: none;
-            color: white;
+            color: #4b5563;
             cursor: pointer;
             padding: 0;
             margin: 0;
-            font-size: 0.85rem;
+            font-size: 0.95rem;
             font-weight: bold;
+        }
+        .remove-emp:hover {
+            color: #ef4444;
         }
         
         #printBtn {
@@ -219,7 +238,7 @@
             margin-bottom: 0;
         }
 
-        /* 🖨️ עיצוב מחדש קשוח להדפסה בלבד */
+        /* 🖨️ עיצוב להדפסה */
         @media print {
             @page { 
                 size: A4 landscape; 
@@ -233,7 +252,6 @@
                 -webkit-print-color-adjust: exact !important; 
                 print-color-adjust: exact !important; 
             }
-            /* הסתרת כל מה שלא קשור לטבלה */
             .card:not(.print-section), h1, button, .delete-shift-btn, .remove-emp, .template-zone, .time-edit-container { 
                 display: none !important; 
             }
@@ -270,24 +288,22 @@
                 box-shadow: none !important; 
                 background-color: #f3f4f6 !important; 
                 width: 12% !important; 
+                font-weight: 800 !important;
                 -webkit-print-color-adjust: exact !important; 
                 print-color-adjust: exact !important; 
             }
-            /* שמירה קשיחה על צבעי העובדים בהדפסה */
             .shift-box { 
                 box-shadow: none !important; 
-                color: white !important; 
-                text-shadow: 1px 1px 1px rgba(0,0,0,0.5) !important;
                 -webkit-print-color-adjust: exact !important; 
                 print-color-adjust: exact !important;
                 padding: 8px 4px !important;
             }
-            /* הצגת הטקסט הנקי והסתרת שעוני הבחירה */
+            /* הדגשת השעות בהדפסה */
             .print-only-time { 
                 display: block !important; 
                 font-size: 11pt !important; 
-                font-weight: bold !important; 
-                color: white !important; 
+                font-weight: 800 !important; /* מודגש בהדפסה */
+                color: #000 !important; 
                 direction: ltr !important;
                 text-align: center !important;
             }
@@ -432,6 +448,11 @@
         }
     }
 
+    // הפיכת הצבע הנבחר לרקע מעודן ופסטלי (רמת שקיפות של כ-20%)
+    function getPastelStyle(hexColor) {
+        return `background-color: ${hexColor}25; border: 2px solid ${hexColor};`;
+    }
+
     function addEmployee() {
         const name = document.getElementById('empName').value.trim();
         const color = document.getElementById('empColor').value;
@@ -479,7 +500,6 @@
         if (shift) {
             shift[field] = val;
             localStorage.setItem('grid_shifts', JSON.stringify(shifts));
-            // רענון קל רק כדי לעדכן את הטקסט המוסתר של ההדפסה
             const textElement = document.getElementById(`print-time-${id}`);
             if(textElement) {
                 textElement.innerText = `${shift.start} - ${shift.end}`;
@@ -551,8 +571,9 @@
         select.innerHTML = '<option value="">-- בחר עובד --</option>';
 
         employees.forEach(emp => {
+            // תגיות עובדים מעודנות עם צבע מובהר ומסגרת בולטת
             listDiv.innerHTML += `
-                <span class="emp-badge" style="background-color: ${emp.color}">
+                <span class="emp-badge" style="${getPastelStyle(emp.color)}">
                     ${emp.name}
                     <button class="remove-emp" onclick="deleteEmployee('${emp.id}')">×</button>
                 </span>`;
@@ -571,7 +592,7 @@
 
         employees.forEach(emp => {
             let rowHtml = `<tr>`;
-            rowHtml += `<td class="emp-col" style="border-right: 4px solid ${emp.color}">${emp.name}</td>`;
+            rowHtml += `<td class="emp-col" style="border-right: 5px solid ${emp.color}">${emp.name}</td>`;
             
             for (let i = 0; i < 7; i++) {
                 const currentDate = weekDates[i];
@@ -580,7 +601,7 @@
                 rowHtml += `<td>`;
                 if (dayShift) {
                     rowHtml += `
-                        <div class="shift-box" style="background-color: ${emp.color}">
+                        <div class="shift-box" style="${getPastelStyle(emp.color)}">
                             <div class="time-edit-container">
                                 <input type="time" class="inline-time-input" value="${dayShift.start}" onchange="updateInlineShiftTime('${dayShift.id}', this.value, 'start')">
                                 <span>-</span>

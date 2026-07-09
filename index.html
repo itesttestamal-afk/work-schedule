@@ -123,11 +123,10 @@
             font-weight: bold;
         }
         
-        /* שם שומר - מודגש מאוד וכהה */
+        /* תא השם בטבלה - מודגש מאוד וקבוע במקום */
         th.emp-col, td.emp-col {
             position: sticky;
             right: 0;
-            background-color: #f3f4f6;
             font-weight: bold !important;
             color: #000000 !important;
             z-index: 2;
@@ -136,8 +135,10 @@
             font-size: 1rem;
         }
         
-        /* קוביית המשמרת */
+        /* ⬜ מרובע המשמרת - לבן נקי לחלוטין בלי צבע בפנים */
         .shift-box {
+            background-color: #ffffff !important;
+            border: 1px solid #cbd5e1;
             padding: 10px 6px;
             border-radius: 8px;
             position: relative;
@@ -154,10 +155,10 @@
             margin-bottom: 6px;
         }
         
-        /* שעות מודגשות בתוך תיבות הבחירה */
+        /* שעות מודגשות וברורות בתוך תיבות הבחירה */
         .inline-time-input {
             background: white !important;
-            border: 1px solid #cbd5e1 !important;
+            border: 1px solid #94a3b8 !important;
             color: #000000 !important;
             font-weight: bold !important;
             font-size: 0.9rem !important;
@@ -183,9 +184,9 @@
         .delete-shift-btn {
             display: block;
             margin: 4px auto 0 auto;
-            background: rgba(0, 0, 0, 0.05);
-            border: 1px solid rgba(0, 0, 0, 0.1);
-            color: #374151;
+            background: #f1f5f9;
+            border: 1px solid #cbd5e1;
+            color: #475569;
             padding: 2px 8px;
             border-radius: 4px;
             font-size: 0.75rem;
@@ -230,7 +231,7 @@
             margin-bottom: 0;
         }
 
-        /* 🖨️ עיצוב להדפסה */
+        /* 🖨️ התאמות מיוחדות להדפסה */
         @media print {
             @page { 
                 size: A4 landscape; 
@@ -274,23 +275,23 @@
                 padding: 10px 4px !important; 
                 font-size: 11pt !important; 
                 border: 1px solid #000 !important; 
+                -webkit-print-color-adjust: exact !important; 
+                print-color-adjust: exact !important;
             }
             th.emp-col, td.emp-col { 
                 position: static !important; 
                 box-shadow: none !important; 
-                background-color: #f3f4f6 !important; 
                 width: 12% !important; 
                 font-weight: bold !important;
-                -webkit-print-color-adjust: exact !important; 
-                print-color-adjust: exact !important; 
             }
+            /* שמירה על מרובעים לבנים ונקיים בהדפסה */
             .shift-box { 
+                background-color: #ffffff !important;
+                border: 1px solid #000000 !important;
                 box-shadow: none !important; 
-                -webkit-print-color-adjust: exact !important; 
-                print-color-adjust: exact !important;
                 padding: 8px 4px !important;
             }
-            /* שעות מודגשות וכהות בהדפסה */
+            /* שעות מודגשות ושחורות לחלוטין בהדפסה */
             .print-only-time { 
                 display: block !important; 
                 font-size: 12pt !important; 
@@ -307,7 +308,6 @@
 <div class="app-container">
     <h1>📅 סידור עבודה שבועי</h1>
 
-    <!-- חלק א': הוספת עובד -->
     <div class="card">
         <h2>👤 הוספת עובד חדש</h2>
         <div class="flex-row">
@@ -324,7 +324,6 @@
         <div class="emp-tag-list" id="employeesList"></div>
     </div>
 
-    <!-- חלק ב': הוספת משמרת -->
     <div class="card">
         <h2>⏰ הוספת משמרת לסידור</h2>
         <label>בחר עובד:</label>
@@ -366,7 +365,6 @@
         <button onclick="addShift()">הוסף לטבלה השבועית</button>
     </div>
 
-    <!-- חלק ג': הטבלה השבועית וניהול תבניות -->
     <div class="card print-section" style="padding: 10px;">
         <h2>📋 לוח המשמרות לשבוע זה</h2>
         
@@ -443,14 +441,13 @@
         }
     }
 
-    // פונקציה אמינה לחלוטין להפיכת צבע HEX לצבע RGBA עדין שמתאים לכל המכשירים
-    function getPastelStyle(hexColor) {
+    // פונקציה שמייצרת צבע רקע עדין ומעודן לשורה (15% אטימות)
+    function getPastelRGBA(hexColor, alpha = 0.15) {
         let hex = hexColor.replace('#', '');
         let r = parseInt(hex.substring(0, 2), 16);
         let g = parseInt(hex.substring(2, 4), 16);
         let b = parseInt(hex.substring(4, 6), 16);
-        // 0.18 נותן רמת שקיפות מושלמת - לא בהיר מדי ולא כהה מדי
-        return `background-color: rgba(${r}, ${g}, ${b}, 0.18); border: 2px solid ${hexColor};`;
+        return `rgba(${r}, ${g}, ${b}, ${alpha})`;
     }
 
     function addEmployee() {
@@ -571,8 +568,9 @@
         select.innerHTML = '<option value="">-- בחר עובד --</option>';
 
         employees.forEach(emp => {
+            // תגיות עובדים למעלה - עם רקע השורה התואם
             listDiv.innerHTML += `
-                <span class="emp-badge" style="${getPastelStyle(emp.color)}">
+                <span class="emp-badge" style="background-color: ${getPastelRGBA(emp.color, 0.2)}; border: 2px solid ${emp.color};">
                     ${emp.name}
                     <button class="remove-emp" onclick="deleteEmployee('${emp.id}')">×</button>
                 </span>`;
@@ -590,17 +588,21 @@
         const weekDates = getCurrentWeekDates();
 
         employees.forEach(emp => {
+            // צבע הרקע שישמש את כל השורה של העובד הנוכחי
+            const rowBgStyle = `background-color: ${getPastelRGBA(emp.color, 0.16)} !important;`;
+            
             let rowHtml = `<tr>`;
-            rowHtml += `<td class="emp-col" style="border-right: 5px solid ${emp.color}">${emp.name}</td>`;
+            // תא שם השומר מקבל את רקע השורה ופס צבע עבה בולט בצד
+            rowHtml += `<td class="emp-col" style="${rowBgStyle} border-right: 5px solid ${emp.color};">${emp.name}</td>`;
             
             for (let i = 0; i < 7; i++) {
                 const currentDate = weekDates[i];
                 const dayShift = shifts.find(s => s.empId === emp.id && s.date === currentDate);
                 
-                rowHtml += `<td>`;
+                rowHtml += `<td style="${rowBgStyle}">`;
                 if (dayShift) {
                     rowHtml += `
-                        <div class="shift-box" style="${getPastelStyle(emp.color)}">
+                        <div class="shift-box">
                             <div class="time-edit-container">
                                 <input type="time" class="inline-time-input" value="${dayShift.start}" onchange="updateInlineShiftTime('${dayShift.id}', this.value, 'start')">
                                 <span>-</span>
@@ -612,7 +614,7 @@
                         </div>
                     `;
                 } else {
-                    rowHtml += `<span style="color: #d1d5db; font-size: 0.8rem;">-</span>`;
+                    rowHtml += `<span style="color: #94a3b8; font-size: 0.85rem; font-weight: bold;">-</span>`;
                 }
                 rowHtml += `</td>`;
             }
